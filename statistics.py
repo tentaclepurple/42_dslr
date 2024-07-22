@@ -1,10 +1,12 @@
 from typing import Any
 
 
-def ft_mean(*args: Any):
+def ft_mean(args):
     """
     take in *args a quantity of unknown number and return the mean.
     """
+    if len(args) == 0:
+        return None
     return sum(args) / len(args)
 
 
@@ -12,6 +14,7 @@ def ft_median(args: list):
     """
     take in *args a quantity of unknown number and return the median.
     """
+    args = ft_sort(args)
     if len(args) % 2 == 0:
         return (args[len(args) // 2] + args[len(args) // 2 - 1]) / 2
     else:
@@ -22,28 +25,41 @@ def ft_quartile(args: list):
     """
     take in *args a quantity of unknown number and return 25% and 75% quartile.
     """
-    if len(args) % 2 == 0:
-        q1 = (args[len(args) // 4] + args[len(args) // 4 - 1]) / 2
-        q3 = (args[len(args) // 4 * 3] + args[len(args) // 4 * 3 - 1]) / 2
-    else:
-        q1 = args[len(args) // 4]
-        q3 = args[len(args) // 4 * 3]
+    args = sorted(args)
+    n = len(args)
+    
+    def percentile(p):
+        k = p * (n - 1)
+        f = int(k)
+        c = k - f
+        if f + 1 < n:
+            return args[f] + (args[f + 1] - args[f]) * c
+        else:
+            return args[f]
+
+    q1 = percentile(0.25)
+    q3 = percentile(0.75)
     return [q1, q3]
 
 
-def ft_std(*args: Any):
+def ft_std(args):
     """
     take in *args a quantity of unknown number
     and return the standard deviation.
     """
-    mean = ft_mean(*args)
-    return (sum((arg - mean) ** 2 for arg in args) / len(args)) ** 0.5
+    if len(args) == 0:
+        return None
+    mean = ft_mean(args)
+    variance = sum((arg - mean) ** 2 for arg in args) / (len(args) - 1)
+    return variance ** 0.5
 
 
-def ft_sort(*args: Any):
+def ft_sort(args):
     """
     take in *args a quantity of unknown number and return a sorted list.
     """
+    if len(args) == 0:
+        return []
     args = list(args)
     for i in range(len(args)):
         for j in range(len(args)):
