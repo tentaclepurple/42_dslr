@@ -1,5 +1,5 @@
 import pandas as pd
-from statistics import ft_mean, ft_median, ft_std, ft_sort, ft_quartile
+from ft_statistics import ft_mean, ft_median, ft_std, ft_sort, ft_quartile
 
 
 def ft_describe(df: pd.DataFrame) -> pd.DataFrame:
