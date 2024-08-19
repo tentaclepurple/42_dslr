@@ -1,0 +1,8 @@
+services:
+  python:
+    container_name: python
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
