@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import pickle
 import matplotlib.pyplot as plt
+from clean_utils import fill_missing_with_mean, normalize_data
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x)) 
@@ -32,9 +33,8 @@ def one_vs_all(x, y, classes, alpha, iterations):
         cost_histories.append(cost_history)
     return thetas, cost_histories
 
-def logistic_regression(path):
-    df = pd.read_csv(path)
- 
+def logistic_regression(df):
+    
     category = df['Hogwarts House'].astype('category')
     y = category.cat.codes.to_numpy()
     classes = category.cat.categories.tolist()
@@ -70,5 +70,8 @@ def logistic_regression(path):
 
 if __name__ == "__main__":
     path = 'datasets/dataset_train.csv'
-    logistic_regression(path)
+    df_original = pd.read_csv(path)
+    df_clean = fill_missing_with_mean(df_original)
+    df_normalized = normalize_data(df_clean)
+    logistic_regression(df_normalized)
 

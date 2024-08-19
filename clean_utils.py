@@ -5,7 +5,7 @@ import sys
 def fill_missing_with_mean(df: pd.DataFrame) -> pd.DataFrame:
     numerical_cols = df.select_dtypes(include=[float, int]).columns
     for col in numerical_cols:
-        df[col].fillna(df[col].mean(), inplace=True)
+        df[col] = df[col].fillna(df[col].mean())
     return df
 
 
