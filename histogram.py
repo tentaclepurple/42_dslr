@@ -1,36 +1,58 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from tqdm import tqdm
+import sys
 import os
 
+try:
+    filesys = sys.argv[1]
+except IndexError:
+    print('No file provided')
+    sys.exit(1)
 
-def plot_histograms(path: str):
-    df = pd.read_csv(path)
+try:
+    df = pd.read_csv(filesys)
+except FileNotFoundError:
+    print('File not found')
+    sys.exit(1)
 
-    houses = df["Hogwarts House"].unique()
-    courses = ['Arithmancy', 'Astronomy', 'Herbology', 
-        'Defense Against the Dark Arts', 'Divination',
-        'Muggle Studies', 'Ancient Runes', 'History of Magic',
-        'Transfiguration', 'Potions', 'Care of Magical Creatures',
-        'Charms', 'Flying']
+courses=[ 
+    'Arithmancy', 'Astronomy', 'Herbology', 'Defense Against the Dark Arts',
+    'Divination', 'Muggle Studies', 'Ancient Runes', 'History of Magic',
+    'Transfiguration', 'Potions', 'Care of Magical Creatures', 'Charms', 'Flying'
+]
 
-    output_dir = "histograms"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+house_column = ['Hogwarts House']
 
-    for course in tqdm(courses):
-        plt.figure(figsize=(10, 6))
-        for house in houses:
-            scores = df[df['Hogwarts House'] == house][course].dropna()
-            plt.hist(scores, alpha=0.5, label=house, bins=20)
-        plt.title(f'Score Distribution for {course}')
-        plt.xlabel('Score')
-        plt.ylabel('Frequency')
-        plt.legend(loc='upper right')
-        plt.savefig(f"{output_dir}/{course}_histogram.png")
-        plt.close()
+df = df.dropna(subset=house_column+ courses) #Filtrar las filas con datos numericos validos
 
+# Crear una figura con subplots
+num_courses = len(courses)
+cols = 4 
+rows = (num_courses + cols - 1) // cols  # Calcula el número de filas necesarias
 
-if __name__ == "__main__":
-    path = "datasets/dataset_train.csv"
-    plot_histograms(path)
+fig, axes = plt.subplots(rows, cols, figsize=(20, 15))
+axes = axes.flatten()  # Convertir a una lista plana para facilitar el acceso
+
+for i, course in enumerate(courses):
+    ax = axes[i]
+    for house in df[house_column[0]].unique():
+        subset = df[df[house_column[0]] == house]
+        ax.hist(subset[course], bins=20, alpha=0.5, label=house)
+    
+    ax.set_title(course)
+    ax.set_xlabel('Scores')
+    ax.set_ylabel('Number of Students')
+    ax.grid(True)
+
+for j in range(i + 1, len(axes)):
+    fig.delaxes(axes[j])
+
+handles, labels = ax.get_legend_handles_labels()
+fig.legend(handles, labels, loc='lower right', fontsize='xx-large')
+plt.tight_layout()
+
+output_dir = 'histograms'
+os.makedirs(output_dir, exist_ok=True)
+output_path = os.path.join(output_dir, 'all_courses_histograms.png')
+plt.savefig(output_path)
+plt.close()
