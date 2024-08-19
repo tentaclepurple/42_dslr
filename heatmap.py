@@ -1,10 +1,16 @@
+import sys
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 def plot_heatmap(path: str):
-    df = pd.read_csv(path)
+    try:
+        df = pd.read_csv(path)
+
+    except FileNotFoundError:
+        print('File not found')
+        sys.exit(1)
 
     numerical_df = df.select_dtypes(include=[float, int])
 

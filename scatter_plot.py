@@ -1,31 +1,59 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import sys
+
 from heatmap import plot_heatmap
 
+# Diccionario de colores para cada casa
+house_colors = {
+    'Gryffindor': 'red',
+    'Hufflepuff': 'yellow',
+    'Ravenclaw': 'blue',
+    'Slytherin': 'green'
+}
 
 def plot_scatter(path: str):
-    df = pd.read_csv(path)
+    
+    try:
+        df = pd.read_csv(path)
+    
+    except FileNotFoundError:
+        print('File not found')
+        sys.exit(1)
 
     feature1 = 'Transfiguration'
     feature2 = 'History of Magic'
+    house_feature = 'Hogwarts House'  # Columna que contiene las casas
 
     output_dir = "scatter_plots"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     plt.figure(figsize=(10, 6))
-    plt.scatter(df[feature1], df[feature2], alpha=0.5, edgecolors='w', linewidth=0.5)
+
+    # Asignar colores a cada punto basado en la casa
+    for house, color in house_colors.items():
+        subset = df[df[house_feature] == house]
+        plt.scatter(subset[feature1], subset[feature2], alpha=0.6, edgecolors='w', linewidth=0.5, label=house, color=color)
+
     plt.title(f'Scatter Plot of {feature1} vs {feature2}')
     plt.xlabel(feature1)
     plt.ylabel(feature2)
     plt.grid(True)
+    plt.legend(title="House")
     plt.savefig(f"{output_dir}/{feature1}_vs_{feature2}_scatter.png")
 
 
 if __name__ == "__main__":
-    path = "datasets/dataset_train.csv"
+    
+    try:
+        path = sys.argv[1]
 
-    plot_heatmap(path)
+        plot_heatmap(path)
 
-    plot_scatter(path)
+        plot_scatter(path)
+        
+    except IndexError:
+        print('No file provided')
+        sys.exit(1)
