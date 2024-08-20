@@ -1,11 +1,15 @@
 import pandas as pd
+from ft_statistics import ft_median
 import sys
 
 
-def fill_missing_with_mean(df: pd.DataFrame) -> pd.DataFrame:
+def fill_missing_with_median(df: pd.DataFrame) -> pd.DataFrame:
     numerical_cols = df.select_dtypes(include=[float, int]).columns
     for col in numerical_cols:
-        df[col].fillna(df[col].mean(), inplace=True)
+        non_na_values = df[col].dropna().tolist()
+        median_value = ft_median(non_na_values)
+        if median_value is not None:
+            df[col] = df[col].fillna(median_value)
     return df
 
 
@@ -36,10 +40,14 @@ if __name__ == '__main__':
     
     try:
         path = 'datasets/dataset_train.csv'
-        
+                
         orig_df = pd.read_csv(path)
         
-        cleaned_df = fill_missing_with_mean(orig_df.copy())
+        print(orig_df)
+        
+        cleaned_df = fill_missing_with_median(orig_df.copy())
+        
+        print(cleaned_df)
 
         normalized_data = normalize_data(cleaned_df.copy())
         

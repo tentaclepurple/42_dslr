@@ -5,7 +5,6 @@ import sys
 
 from heatmap import plot_heatmap
 
-# Diccionario de colores para cada casa
 house_colors = {
     'Gryffindor': 'red',
     'Hufflepuff': 'yellow',
@@ -22,9 +21,9 @@ def plot_scatter(path: str):
         print('File not found')
         sys.exit(1)
 
-    feature1 = 'Transfiguration'
-    feature2 = 'History of Magic'
-    house_feature = 'Hogwarts House'  # Columna que contiene las casas
+    feature1 = 'Astronomy'
+    feature2 = 'Defense Against the Dark Arts'
+    house_feature = 'Hogwarts House'
 
     output_dir = "scatter_plots"
     if not os.path.exists(output_dir):
@@ -32,7 +31,6 @@ def plot_scatter(path: str):
 
     plt.figure(figsize=(10, 6))
 
-    # Asignar colores a cada punto basado en la casa
     for house, color in house_colors.items():
         subset = df[df[house_feature] == house]
         plt.scatter(subset[feature1], subset[feature2], alpha=0.6, edgecolors='w', linewidth=0.5, label=house, color=color)
