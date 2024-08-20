@@ -38,13 +38,14 @@ def logistic_regression(df):
     category = df['Hogwarts House'].astype('category')
     y = category.cat.codes.to_numpy()
     classes = category.cat.categories.tolist()
+    print('Classes: ', classes)
 
     df = df[['Astronomy', 'Herbology', 'Defense Against the Dark Arts']]
     x = df.to_numpy()
     x = np.insert(x, 0, 1, axis=1) #Agregar una columna de unos para el termino independiente
 
     alpha = 0.01
-    iterations = 1000
+    iterations = 10000
     
     thetas, cost_histories = one_vs_all(x, y, np.arange(len(classes)), alpha, iterations)
     print('thetas: ', thetas)
