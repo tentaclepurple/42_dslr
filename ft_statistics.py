@@ -14,7 +14,12 @@ def ft_median(args: list):
     """
     take in *args a quantity of unknown number and return the median.
     """
+    
+    if not args:
+        return None
+
     args = ft_sort(args)
+    
     if len(args) % 2 == 0:
         return (args[len(args) // 2] + args[len(args) // 2 - 1]) / 2
     else:
