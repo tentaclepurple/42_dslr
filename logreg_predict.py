@@ -35,9 +35,12 @@ if __name__ == '__main__':
     try:
         path = 'datasets/dataset_test.csv'
         df = pd.read_csv(path)
+        df_original = pd.read_csv(path)
+        df_clean = fill_missing_with_mean(df_original)
+        df_normalized = normalize_data(df_clean)
         with open('weights/logreg_weigths.pkl', 'rb') as f:
             thetas = pickle.load(f)
     except Exception as e:
         print(e)
         sys.exit(1)
-    predict(df, thetas)
+    predict(df_normalized, thetas)

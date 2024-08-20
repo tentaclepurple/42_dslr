@@ -74,4 +74,3 @@ if __name__ == "__main__":
     df_clean = fill_missing_with_mean(df_original)
     df_normalized = normalize_data(df_clean)
     logistic_regression(df_normalized)
-

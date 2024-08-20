@@ -1,4 +1,6 @@
 /__pycache__
 /histograms
 /weights
+/pair_plots
+/scatter_plots
 houses.csv
