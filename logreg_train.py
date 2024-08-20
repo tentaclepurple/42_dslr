@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import pickle
 import matplotlib.pyplot as plt
-from clean_utils import fill_missing_with_mean, normalize_data
+from clean_utils import fill_missing_with_median, normalize_data
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x)) 
@@ -71,6 +71,6 @@ def logistic_regression(df):
 if __name__ == "__main__":
     path = 'datasets/dataset_train.csv'
     df_original = pd.read_csv(path)
-    df_clean = fill_missing_with_mean(df_original)
+    df_clean = fill_missing_with_median(df_original)
     df_normalized = normalize_data(df_clean)
     logistic_regression(df_normalized)
