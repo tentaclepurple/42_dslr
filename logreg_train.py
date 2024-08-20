@@ -39,7 +39,7 @@ def logistic_regression(df):
     y = category.cat.codes.to_numpy()
     classes = category.cat.categories.tolist()
 
-    df = df.select_dtypes(include=[float, int])
+    df = df[['Astronomy', 'Herbology', 'Defense Against the Dark Arts']]
     x = df.to_numpy()
     x = np.insert(x, 0, 1, axis=1) #Agregar una columna de unos para el termino independiente
 
@@ -47,6 +47,7 @@ def logistic_regression(df):
     iterations = 1000
     
     thetas, cost_histories = one_vs_all(x, y, np.arange(len(classes)), alpha, iterations)
+    print('thetas: ', thetas)
 
     output_dir = 'weights'
     os.makedirs(output_dir, exist_ok=True)
@@ -66,7 +67,6 @@ def logistic_regression(df):
     plt.tight_layout()
     plt.savefig('weights/cost.png')
 
-    print('thetas: ', thetas)
 
 if __name__ == "__main__":
     path = 'datasets/dataset_train.csv'

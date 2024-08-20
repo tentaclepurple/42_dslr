@@ -12,8 +12,9 @@ def predict_one_vs_all(x, thetas):
     return np.argmax(probabilities, axis=1)
 
 def predict(df, thetas) -> None:
-    df = df.select_dtypes(include=[float, int])
+    df = df[['Astronomy', 'Herbology', 'Defense Against the Dark Arts']]
     x = df.to_numpy()
+    x = np.insert(x, 0, 1, axis=1)
 
     if x.shape[1] != thetas.shape[1]:
         print(f"Dimension mismatch: x has {x.shape[1]} columns but thetas have {thetas.shape[1]} columns.")

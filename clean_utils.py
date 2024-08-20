@@ -5,7 +5,7 @@ import sys
 def fill_missing_with_mean(df: pd.DataFrame) -> pd.DataFrame:
     numerical_cols = df.select_dtypes(include=[float, int]).columns
     for col in numerical_cols:
-        df[col] = df[col].fillna(df[col].mean())
+        df[col] = df[col].fillna(df[col].median())
     return df
 
 
@@ -16,9 +16,7 @@ def normalize_data(df: pd.DataFrame) -> pd.DataFrame:
         min_value = df[col].min()
         max_value = df[col].max()
         df[col] = (df[col] - min_value) / (max_value - min_value)
-    
     return df
-
 
 def denormalize_data(normalized_df: pd.DataFrame, reference_df: pd.DataFrame) -> pd.DataFrame:
     numerical_cols = reference_df.select_dtypes(include=[float, int]).columns
