@@ -27,31 +27,35 @@ def cost_function(x, y, theta):
     return cost
 
 
-def gradient_descent(x, y, theta, alpha, iterations):
+def stochastic_gradient_descent(x, y, theta, alpha, iterations):
     m = len(y)
-    cost_history = np.zeros(iterations)
-    for i in range(iterations):
-        '''
-        Here, x @ theta computes a linear combination of the features in x and the weights in theta.
-        This includes the bias term, because x is assumed to have a column of ones at the beginning,
-        and theta[0] is the weight for this column of ones.
-        '''
-        h = sigmoid(x @ theta)    
-        '''
-        Here, we update all the weights in theta, including the bias term.
-        The update is done in such a way that the error (h - y) is distributed to each weight
-        in proportion to the contribution of the corresponding feature to the prediction.
-        '''  
-        theta = theta - (alpha / m) * x.T @ (h - y)
-        cost_history[i] = cost_function(x, y, theta)
+    cost_history = np.zeros(iterations * m)
+    index = 0
+    for i in tqdm(range(iterations)):
+        for j in range(m):
+            # Seleccionar la j-ésima muestra
+            x_j = x[j:j+1]
+            y_j = y[j:j+1]
+
+            # Calcular la predicción para la muestra
+            h = sigmoid(x_j @ theta)
+
+            # Actualizar los parámetros
+            theta = theta - (alpha) * x_j.T @ (h - y_j)
+
+            # Guardar el costo en la historia del costo
+            cost_history[index] = cost_function(x, y, theta)
+            index += 1
+
     return theta, cost_history
+
 
 def one_vs_all(x, y, classes, alpha, iterations):
     thetas = np.zeros((len(classes), x.shape[1]))
     cost_histories = []
-    for i, c in tqdm(enumerate(classes)):
+    for i, c in enumerate(classes):
         binary_y = np.where(y == c, 1, 0)
-        theta, cost_history = gradient_descent(x, binary_y, thetas[i], alpha, iterations)
+        theta, cost_history = stochastic_gradient_descent(x, binary_y, thetas[i], alpha, iterations)
         thetas[i] = theta
         cost_histories.append(cost_history)
     return thetas, cost_histories
@@ -74,7 +78,7 @@ def logistic_regression(df):
 
     output_dir = 'weights'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'logreg_weigths.pkl')
+    output_path = os.path.join(output_dir, 'logreg_weigths_sgd.pkl')
 
     with open(output_path, 'wb') as f:
         pickle.dump(thetas, f)
@@ -88,7 +92,7 @@ def logistic_regression(df):
         axs[i].set_xlabel('Iterations')
         axs[i].set_ylabel('Cost')
     plt.tight_layout()
-    plt.savefig('weights/cost.png')
+    plt.savefig('weights/cost_sgd.png')
 
 
 if __name__ == "__main__":

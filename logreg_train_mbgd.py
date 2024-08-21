@@ -27,31 +27,40 @@ def cost_function(x, y, theta):
     return cost
 
 
-def gradient_descent(x, y, theta, alpha, iterations):
+def mini_batch_gradient_descent(x, y, theta, alpha, iterations, batch_size=32):
     m = len(y)
     cost_history = np.zeros(iterations)
+    
     for i in range(iterations):
-        '''
-        Here, x @ theta computes a linear combination of the features in x and the weights in theta.
-        This includes the bias term, because x is assumed to have a column of ones at the beginning,
-        and theta[0] is the weight for this column of ones.
-        '''
-        h = sigmoid(x @ theta)    
-        '''
-        Here, we update all the weights in theta, including the bias term.
-        The update is done in such a way that the error (h - y) is distributed to each weight
-        in proportion to the contribution of the corresponding feature to the prediction.
-        '''  
-        theta = theta - (alpha / m) * x.T @ (h - y)
+        # Mezclar los datos para evitar patrones en los mini-batches
+        indices = np.random.permutation(m)
+        x_shuffled = x[indices]
+        y_shuffled = y[indices]
+        
+        # Procesar mini-batches
+        for start in range(0, m, batch_size):
+            end = start + batch_size
+            x_mini = x_shuffled[start:end]
+            y_mini = y_shuffled[start:end]
+
+            # Calcular la predicción para el mini-batch
+            h = sigmoid(x_mini @ theta)
+
+            # Actualizar los parámetros con el gradiente del mini-batch
+            theta = theta - (alpha / batch_size) * x_mini.T @ (h - y_mini)
+
+        # Almacenar el costo después de cada iteración (época)
         cost_history[i] = cost_function(x, y, theta)
+    
     return theta, cost_history
+
 
 def one_vs_all(x, y, classes, alpha, iterations):
     thetas = np.zeros((len(classes), x.shape[1]))
     cost_histories = []
     for i, c in tqdm(enumerate(classes)):
         binary_y = np.where(y == c, 1, 0)
-        theta, cost_history = gradient_descent(x, binary_y, thetas[i], alpha, iterations)
+        theta, cost_history = mini_batch_gradient_descent(x, binary_y, thetas[i], alpha, iterations)
         thetas[i] = theta
         cost_histories.append(cost_history)
     return thetas, cost_histories
@@ -74,7 +83,7 @@ def logistic_regression(df):
 
     output_dir = 'weights'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'logreg_weigths.pkl')
+    output_path = os.path.join(output_dir, 'logreg_weigths_mbgd.pkl')
 
     with open(output_path, 'wb') as f:
         pickle.dump(thetas, f)
@@ -88,7 +97,7 @@ def logistic_regression(df):
         axs[i].set_xlabel('Iterations')
         axs[i].set_ylabel('Cost')
     plt.tight_layout()
-    plt.savefig('weights/cost.png')
+    plt.savefig('weights/cost_mbgd.png')
 
 
 if __name__ == "__main__":
