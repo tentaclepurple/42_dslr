@@ -12,7 +12,7 @@ def predict_one_vs_all(x, thetas):
     return np.argmax(probabilities, axis=1)
 
 def predict(df, thetas) -> None:
-    df = df[['Astronomy', 'Herbology', 'Defense Against the Dark Arts']]
+    df = df[['Ancient Runes', 'Defense Against the Dark Arts', 'Charms', 'Divination']]
     x = df.to_numpy()
     x = np.insert(x, 0, 1, axis=1)
 
