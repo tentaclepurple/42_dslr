@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import sys
+import os
 from clean_utils import fill_missing_with_median, normalize_data
 
 def sigmoid(x):
@@ -34,14 +35,20 @@ def predict(df, thetas) -> None:
 
 if __name__ == '__main__':
     try:
-        path = 'datasets/dataset_test.csv'
+        path = sys.argv[1]
         df = pd.read_csv(path)
         df_original = pd.read_csv(path)
         df_clean = fill_missing_with_median(df_original)
         df_normalized = normalize_data(df_clean)
-        with open('weights/logreg_weigths.pkl', 'rb') as f:
-            thetas = pickle.load(f)
+        
+        weights_path = sys.argv[2]
+        if os.path.exists(weights_path):
+            if os.access(weights_path, os.R_OK):
+                with open(weights_path, 'rb') as file:
+                    weights = pickle.load(file)
+        
+        predict(df_normalized, weights)
+        
     except Exception as e:
         print(e)
         sys.exit(1)
-    predict(df_normalized, thetas)

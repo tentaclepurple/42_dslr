@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import sys
 import os
 import pickle
 import matplotlib.pyplot as plt
@@ -57,9 +58,8 @@ def logistic_regression(df):
     category = df['Hogwarts House'].astype('category')
     y = category.cat.codes.to_numpy()
     classes = category.cat.categories.tolist()
-    print('Classes: ', classes)
 
-    df = df[['Ancient Runes', 'Defense Against the Dark Arts', 'Charms', 'Divination', 'Potions']]
+    df = df[['Ancient Runes', 'Defense Against the Dark Arts', 'Charms', 'Divination']]
     x = df.to_numpy()
     x = np.insert(x, 0, 1, axis=1) # Add bias term
 
@@ -88,8 +88,14 @@ def logistic_regression(df):
 
 
 if __name__ == "__main__":
-    path = 'datasets/dataset_train.csv'
-    df_original = pd.read_csv(path)
-    df_clean = fill_missing_with_median(df_original)
-    df_normalized = normalize_data(df_clean)
-    logistic_regression(df_normalized)
+    try:
+        path = sys.argv[1]
+        
+        df_original = pd.read_csv(path)
+        df_clean = fill_missing_with_median(df_original)
+        df_normalized = normalize_data(df_clean)
+        logistic_regression(df_normalized)
+        
+    except Exception as e:
+        print(e)
+        sys.exit(1)
