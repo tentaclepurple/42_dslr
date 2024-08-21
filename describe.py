@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 from ft_statistics import ft_mean, ft_median, ft_std, ft_sort, ft_quartile
 
 
@@ -88,18 +89,16 @@ def ft_describe(df: pd.DataFrame) -> pd.DataFrame:
     return dataf
 
 
-def main():
-    path = "datasets/dataset_train.csv"
-    df = pd.read_csv(path)
-
-    print("PANDAS HEAD:")
-    print(df)
-
-    print("PANDAS DESCRIBE:")
-    print(df.describe())
-
-    ft_describe(df)
-
-
 if __name__ == "__main__":
-    main()
+    try:
+        path = sys.argv[1]
+        df = pd.read_csv(path)
+        print("Ft_describe:")
+        ft_describe(df)
+        print()
+        print("Pandas describe:")
+        print(df.describe())
+        
+    except Exception as e:
+        print(e)
+        sys.exit(1)

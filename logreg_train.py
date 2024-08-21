@@ -8,13 +8,13 @@ from clean_utils import fill_missing_with_median, normalize_data
 
 def sigmoid(x):
     '''
-    La función sigmoide toma un número x y lo transforma en un valor entre 0 y 1.
-    Esto se hace a través de la fórmula 1 / (1 + e^-x), donde e es la base del logaritmo natural.
-    Cuando x es muy grande, e^-x se acerca a 0, por lo que la salida de la función sigmoide se acerca a 1.
-    Cuando x es muy pequeño, e^-x se acerca a infinito, por lo que la salida de la función sigmoide se acerca a 0.
-    Cuando x es 0, e^-x es 1, por lo que la salida de la función sigmoide es 0.5.
-    Por lo tanto, la función sigmoide mapea los números positivos a valores entre 0.5 y 1,
-    y mapea los números negativos a valores entre 0 y 0.5.
+    The sigmoid function takes a number x and transforms it into a value between 0 and 1.
+This is done through the formula 1 / (1 + e^-x), where e is the base of the natural logarithm.
+When x is very large, e^-x approaches 0, so the output of the sigmoid function approaches 1.
+When x is very small, e^-x approaches infinity, so the output of the sigmoid function approaches 0.
+When x is 0, e^-x is 1, so the output of the sigmoid function is 0.5.
+Therefore, the sigmoid function maps positive numbers to values ​​between 0.5 and 1,
+and maps negative numbers to values ​​between 0 and 0.5.
     '''
     return 1 / (1 + np.exp(-x)) 
 
@@ -29,15 +29,15 @@ def gradient_descent(x, y, theta, alpha, iterations):
     cost_history = np.zeros(iterations)
     for i in range(iterations):
         '''
-        Aquí, x @ theta calcula una combinación lineal de las características en x y los pesos en theta.
-        Esto incluye el término de sesgo, porque x se supone que tiene una columna de unos al principio,
-        y theta[0] es el peso para esta columna de unos.
+        Here, x @ theta computes a linear combination of the features in x and the weights in theta.
+        This includes the bias term, because x is assumed to have a column of ones at the beginning,
+        and theta[0] is the weight for this column of ones.
         '''
         h = sigmoid(x @ theta)    
         '''
-        Aquí, actualizamos todos los pesos en theta, incluyendo el término de sesgo.
-        La actualización se hace de tal manera que el error (h - y) se distribuye a cada peso
-        en proporción a la contribución de la característica correspondiente a la predicción.
+        Here, we update all the weights in theta, including the bias term.
+        The update is done in such a way that the error (h - y) is distributed to each weight
+        in proportion to the contribution of the corresponding feature to the prediction.
         '''  
         theta = theta - (alpha / m) * x.T @ (h - y)
         cost_history[i] = cost_function(x, y, theta)
