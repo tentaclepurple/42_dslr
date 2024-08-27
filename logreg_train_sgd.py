@@ -66,7 +66,7 @@ def logistic_regression(df):
 
     output_dir = 'weights'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'logreg_weights_sgd2.pkl')
+    output_path = os.path.join(output_dir, 'logreg_weights_sgd.pkl')
 
     with open(output_path, 'wb') as f:
         pickle.dump(thetas, f)

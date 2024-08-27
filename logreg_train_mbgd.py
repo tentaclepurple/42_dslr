@@ -31,7 +31,7 @@ def mini_batch_gradient_descent(x, y, theta, alpha, iterations, batch_size=32):
     m = len(y)
     cost_history = np.zeros(iterations)
     
-    for i in range(iterations):
+    for i in tqdm(range(iterations)):
         # Shuffle data to avoid patterns in mini-batches
         indices = np.random.permutation(m)
         x_shuffled = x[indices]
@@ -58,7 +58,7 @@ def mini_batch_gradient_descent(x, y, theta, alpha, iterations, batch_size=32):
 def one_vs_all(x, y, classes, alpha, iterations):
     thetas = np.zeros((len(classes), x.shape[1]))
     cost_histories = []
-    for i, c in tqdm(enumerate(classes)):
+    for i, c in enumerate(classes):
         binary_y = np.where(y == c, 1, 0)
         theta, cost_history = mini_batch_gradient_descent(x, binary_y, thetas[i], alpha, iterations)
         thetas[i] = theta
