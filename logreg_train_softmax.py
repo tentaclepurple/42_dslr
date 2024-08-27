@@ -3,22 +3,24 @@ import pandas as pd
 import sys
 import os
 import pickle
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 from clean_utils import fill_missing_with_median, normalize_data
+
 
 def softmax(z):
     exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))  # Para estabilidad numérica
     return exp_z / np.sum(exp_z, axis=1, keepdims=True)
 
+
 def gradient_descent(x, y, theta, alpha, iterations):
     m = len(y)
     y_one_hot = np.eye(theta.shape[1])[y]
-    for i in tqdm(range(iterations)):
+    for _ in tqdm(range(iterations)):
         z = x @ theta
         h = softmax(z)
         theta = theta - (alpha / m) * x.T @ (h - y_one_hot)
     return theta
+
 
 def logistic_regression(df):
     
@@ -39,10 +41,11 @@ def logistic_regression(df):
 
     output_dir = 'weights'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'logreg_weigths_softmax.pkl')
+    output_path = os.path.join(output_dir, 'logreg_weights_softmax.pkl')
 
     with open(output_path, 'wb') as f:
         pickle.dump(thetas, f)
+
 
 if __name__ == "__main__":
     try:

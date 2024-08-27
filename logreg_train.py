@@ -10,12 +10,12 @@ from clean_utils import fill_missing_with_median, normalize_data
 def sigmoid(x):
     '''
     The sigmoid function takes a number x and transforms it into a value between 0 and 1.
-This is done through the formula 1 / (1 + e^-x), where e is the base of the natural logarithm.
-When x is very large, e^-x approaches 0, so the output of the sigmoid function approaches 1.
-When x is very small, e^-x approaches infinity, so the output of the sigmoid function approaches 0.
-When x is 0, e^-x is 1, so the output of the sigmoid function is 0.5.
-Therefore, the sigmoid function maps positive numbers to values ​​between 0.5 and 1,
-and maps negative numbers to values ​​between 0 and 0.5.
+    This is done through the formula 1 / (1 + e^-x), where e is the base of the natural logarithm.
+    When x is very large, e^-x approaches 0, so the output of the sigmoid function approaches 1.
+    When x is very small, e^-x approaches infinity, so the output of the sigmoid function approaches 0.
+    When x is 0, e^-x is 1, so the output of the sigmoid function is 0.5.
+    Therefore, the sigmoid function maps positive numbers to values ​​between 0.5 and 1,
+    and maps negative numbers to values ​​between 0 and 0.5.
     '''
     return 1 / (1 + np.exp(-x)) 
 
@@ -30,7 +30,7 @@ def cost_function(x, y, theta):
 def gradient_descent(x, y, theta, alpha, iterations):
     m = len(y)
     cost_history = np.zeros(iterations)
-    for i in range(iterations):
+    for i in tqdm(range(iterations)):
         '''
         Here, x @ theta computes a linear combination of the features in x and the weights in theta.
         This includes the bias term, because x is assumed to have a column of ones at the beginning,
@@ -46,10 +46,11 @@ def gradient_descent(x, y, theta, alpha, iterations):
         cost_history[i] = cost_function(x, y, theta)
     return theta, cost_history
 
+
 def one_vs_all(x, y, classes, alpha, iterations):
     thetas = np.zeros((len(classes), x.shape[1]))
     cost_histories = []
-    for i, c in tqdm(enumerate(classes)):
+    for i, c in enumerate(classes):
         binary_y = np.where(y == c, 1, 0)
         theta, cost_history = gradient_descent(x, binary_y, thetas[i], alpha, iterations)
         thetas[i] = theta
@@ -74,7 +75,7 @@ def logistic_regression(df):
 
     output_dir = 'weights'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'logreg_weigths.pkl')
+    output_path = os.path.join(output_dir, 'logreg_weights.pkl')
 
     with open(output_path, 'wb') as f:
         pickle.dump(thetas, f)

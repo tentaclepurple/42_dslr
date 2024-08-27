@@ -3,13 +3,14 @@ import pandas as pd
 import sys
 import os
 import pickle
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 from clean_utils import fill_missing_with_median, normalize_data
+
 
 def softmax(z):
     exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))  # Para estabilidad numérica
     return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+
 
 def predict_softmax(x, theta):
 
@@ -26,6 +27,7 @@ def predict_softmax(x, theta):
     predictions = np.argmax(h, axis=1)
     return predictions
 
+
 def predict(df, thetas) -> None:
     df = df[['Ancient Runes', 'Defense Against the Dark Arts', 'Charms', 'Divination']]
     x = df.to_numpy()
@@ -41,6 +43,7 @@ def predict(df, thetas) -> None:
 
     output_file = 'houses.csv'
     results.to_csv(output_file, index=False)
+
 
 if __name__ == '__main__':
         path = sys.argv[1]

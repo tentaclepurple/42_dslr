@@ -32,24 +32,24 @@ def mini_batch_gradient_descent(x, y, theta, alpha, iterations, batch_size=32):
     cost_history = np.zeros(iterations)
     
     for i in range(iterations):
-        # Mezclar los datos para evitar patrones en los mini-batches
+        # Shuffle data to avoid patterns in mini-batches
         indices = np.random.permutation(m)
         x_shuffled = x[indices]
         y_shuffled = y[indices]
         
-        # Procesar mini-batches
+        # Process mini-batches
         for start in range(0, m, batch_size):
             end = start + batch_size
             x_mini = x_shuffled[start:end]
             y_mini = y_shuffled[start:end]
 
-            # Calcular la predicción para el mini-batch
+            # Calculate the prediction for the mini-batch
             h = sigmoid(x_mini @ theta)
 
-            # Actualizar los parámetros con el gradiente del mini-batch
+            # Update parameters with mini-batch gradient
             theta = theta - (alpha / batch_size) * x_mini.T @ (h - y_mini)
 
-        # Almacenar el costo después de cada iteración (época)
+        # Store the cost after each iteration (epoch)
         cost_history[i] = cost_function(x, y, theta)
     
     return theta, cost_history
@@ -77,13 +77,13 @@ def logistic_regression(df):
     x = np.insert(x, 0, 1, axis=1) # Add bias term
 
     alpha = 0.01
-    iterations = 10000
+    iterations = 3000
     
     thetas, cost_histories = one_vs_all(x, y, np.arange(len(classes)), alpha, iterations)
 
     output_dir = 'weights'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'logreg_weigths_mbgd.pkl')
+    output_path = os.path.join(output_dir, 'logreg_weights_mbgd.pkl')
 
     with open(output_path, 'wb') as f:
         pickle.dump(thetas, f)

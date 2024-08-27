@@ -8,17 +8,7 @@ from tqdm import tqdm
 from clean_utils import fill_missing_with_median, normalize_data
 
 def sigmoid(x):
-    '''
-    The sigmoid function takes a number x and transforms it into a value between 0 and 1.
-This is done through the formula 1 / (1 + e^-x), where e is the base of the natural logarithm.
-When x is very large, e^-x approaches 0, so the output of the sigmoid function approaches 1.
-When x is very small, e^-x approaches infinity, so the output of the sigmoid function approaches 0.
-When x is 0, e^-x is 1, so the output of the sigmoid function is 0.5.
-Therefore, the sigmoid function maps positive numbers to values ​​between 0.5 and 1,
-and maps negative numbers to values ​​between 0 and 0.5.
-    '''
-    return 1 / (1 + np.exp(-x)) 
-
+    return 1 / (1 + np.exp(-x))
 
 def cost_function(x, y, theta):
     m = len(y)
@@ -26,59 +16,57 @@ def cost_function(x, y, theta):
     cost = -1 / m * (y @ np.log(h) + (1 - y) @ np.log(1 - h))
     return cost
 
-
 def stochastic_gradient_descent(x, y, theta, alpha, iterations):
     m = len(y)
-    cost_history = np.zeros(iterations * m)
-    index = 0
+    cost_history = np.zeros(iterations)
+    
     for i in tqdm(range(iterations)):
+        # Shuffle the data to avoid patterns
+        indices = np.random.permutation(m)
+        x_shuffled = x[indices]
+        y_shuffled = y[indices]
+        
         for j in range(m):
-            # Seleccionar la j-ésima muestra
-            x_j = x[j:j+1]
-            y_j = y[j:j+1]
-
-            # Calcular la predicción para la muestra
-            h = sigmoid(x_j @ theta)
-
-            # Actualizar los parámetros
-            theta = theta - (alpha) * x_j.T @ (h - y_j)
-
-            # Guardar el costo en la historia del costo
-            cost_history[index] = cost_function(x, y, theta)
-            index += 1
-
+            xi = x_shuffled[j:j+1]  # Single example (row)
+            yi = y_shuffled[j:j+1]  # Single label
+            
+            h = sigmoid(xi @ theta)
+            theta = theta - (alpha) * xi.T @ (h - yi)
+        
+        # Store the cost after each epoch
+        cost_history[i] = cost_function(x, y, theta)
+    
     return theta, cost_history
-
 
 def one_vs_all(x, y, classes, alpha, iterations):
     thetas = np.zeros((len(classes), x.shape[1]))
     cost_histories = []
+    
     for i, c in enumerate(classes):
         binary_y = np.where(y == c, 1, 0)
         theta, cost_history = stochastic_gradient_descent(x, binary_y, thetas[i], alpha, iterations)
         thetas[i] = theta
         cost_histories.append(cost_history)
+    
     return thetas, cost_histories
 
-
 def logistic_regression(df):
-    
     category = df['Hogwarts House'].astype('category')
     y = category.cat.codes.to_numpy()
     classes = category.cat.categories.tolist()
 
     df = df[['Ancient Runes', 'Defense Against the Dark Arts', 'Charms', 'Divination']]
     x = df.to_numpy()
-    x = np.insert(x, 0, 1, axis=1) # Add bias term
+    x = np.insert(x, 0, 1, axis=1)  # Add bias term
 
     alpha = 0.01
-    iterations = 10000
+    iterations = 5
     
     thetas, cost_histories = one_vs_all(x, y, np.arange(len(classes)), alpha, iterations)
 
     output_dir = 'weights'
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'logreg_weigths_sgd.pkl')
+    output_path = os.path.join(output_dir, 'logreg_weights_sgd2.pkl')
 
     with open(output_path, 'wb') as f:
         pickle.dump(thetas, f)
@@ -93,7 +81,6 @@ def logistic_regression(df):
         axs[i].set_ylabel('Cost')
     plt.tight_layout()
     plt.savefig('weights/cost_sgd.png')
-
 
 if __name__ == "__main__":
     try:
